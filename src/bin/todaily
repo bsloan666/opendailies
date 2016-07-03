@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+
+# Copyright (c) 2016, bsloan
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+# 
+#     1. Redistributions of source code must retain the above copyright notice,
+#        this list of conditions and the following disclaimer.
+# 
+#     2. Redistributions in binary form must reproduce the above copyright notice,
+#        this list of conditions and the following disclaimer in the documentation
+#        and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+"""
+Create a daily from a rendered sequence
+"""
+import os
+import re
+import sys
+from optparse import OptionParser
+
+
+from opendailies import slate
+from opendailies import overlay 
+from opendailies import process as proc
+
+import od_configure as conf
+import od_callbacks as cb
+
+def parse_cmdline():
+    usage =         "usage: %prog <opt1> <arg1> <opt2> <arg2> -i <INPATH> -o <OUTPATH> -s <START> -e <END>"
+    description =   "Create a daily from a render sequence" 
+
+    parser =        OptionParser(usage=usage, description=description)
+    parser.add_option('-i', '--inpath',  help='Format string with nuke-style frame',
+                    default='', dest="inpath", type="string")
+    parser.add_option('-o', '--outpath',  help='Format string with nuke-style frame',
+                    default='', dest="outpath", type="string")
+    parser.add_option('-s', '--start',  help='Integer start frame',
+                    default=-1, dest="start", type="int")
+    parser.add_option('-e', '--end',  help='Integer end frame',
+                    default=-1, dest="end", type="int")
+    parser.add_option('-f', '--format',  help='File format of output (should agree with --outpath extension)',
+                    default='exr', dest="format", choices=['exr', 'jpg', 'tiff', 'dpx'] )
+
+    return parser.parse_args()
+
+(options, args) = parse_cmdline()
+
+
+
+if options.inpath == '':
+    print "Error: a valid input path must be provided.  Use -i option."
+    sys.exit(1)
+if options.outpath == '':
+    print "Error: a valid output path must be provided. Use -o option" 
+    sys.exit(1)
+if options.start == -1:
+    print "Error: a valid start frame must be provided. Use -s option" 
+    sys.exit(1)
+if options.end == -1:
+    print "Error: a valid end frame must be provided.   Use -e option"
+    sys.exit(1)
+
+context = cb.DailyContext(path=options.inpath)
+
+cmd = slate.build_slate_command(options.inpath, options.outpath, options.start, options.end,  
+        conf.formats['editorial'], conf.slate_labels, conf.slate_fields, context)
+print cmd
+out = proc.extract_output(cmd)
+print out
+
+for i in range( options.start,  options.end+1):
+    cmd = overlay.render_with_overlay_command(options.inpath, options.outpath, i,  
+            conf.formats['editorial'], conf.overlay_labels, context)
+    print cmd
+    out = proc.extract_output(cmd)
+    print out
+
