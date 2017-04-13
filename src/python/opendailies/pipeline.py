@@ -27,7 +27,8 @@
 """
 Pipeline class
 
-Defines a fixed series of steps used to render and register a daily
+
+Defines a fixed series of steps used to render and register an archive
 """
 
 from odobject import ODObject

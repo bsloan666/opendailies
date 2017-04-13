@@ -30,8 +30,7 @@ Custom OpenDailies configuration
 
 from odict import OrderedDict
 
-oiiotool_command = 'env LD_PRELOAD=/tools/package/gcc/4.8.5/lib64/libstdc++.so \
-        /dd/dept/software/users/bsloan/swdevl/bsloan/3ps/openimageio/1.7.2/private/build/openimageio/bin/oiiotool'
+oiiotool_command = 'oiiotool --with openimageio=1.7.7,opencolorio=1.0.9,openexr=2.2.0,ilmbase=2.2.0' 
 
 fonts = { 
         'normal':'/dd/facility/lib/fonts/Arial.ttf' , 
