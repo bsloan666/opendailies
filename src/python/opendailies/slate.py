@@ -40,6 +40,7 @@ import od_configure as conf
 def build_thumbnail_command(seq_fmt_str,frame,dims, outpath ):
     cmd = [conf.oiiotool_command]
     cmd.append( '-v' )
+
     #cmd.append( '--autocc' )
     cmd.append(seq_fmt_str%frame)
     cmd.append( '--ch R,G,B --resize %dx%d'%(
@@ -70,6 +71,7 @@ def build_slate_command(seq_fmt_str, out_fmt_str, start, end, dims, labels, fiel
     cmd = [conf.oiiotool_command]
     cmd.append( context.translate(conf.slate_backdrop['file']))
     cmd.append( '-v' )
+
     #cmd.append( '--autocc' )
     cmd.append( '--resize %dx0 --crop %dx%d+0+%d --cut %dx%d'%(
             dims['width'], dims['width'], dims['height'] - backdrop_shift,

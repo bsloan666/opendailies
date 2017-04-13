@@ -27,6 +27,7 @@
 """
 Pipeline class
 
+
 Defines a fixed series of steps used to render and register an archive
 """
 
