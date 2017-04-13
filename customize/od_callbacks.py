@@ -89,13 +89,19 @@ class DailyContext(object):
         return self.frameno   
 
     def daily_string(self):
-        return '_'.join([self.fields['allocation'],self.fields['version'] ])
+        return '_'.join([self.allocation_string(), self.version_string() ]) 
 
     def shot_string(self):
-        return self.fields['shot']
+        shot = '9999' 
+        try:
+            shot = self.fields['shot']
+        except KeyError, e:
+            pass
+        return shot
+            
 
     def delivery_name_string(self):
-        return '_'.join([self.fields['sequence'],self.fields['shot'],self.fields['version'] ])
+        return '_'.join([self.sequence_string(), self.shot_string(), self.version_string() ])
 
     def user_string(self):
         return os.getenv('USER')
@@ -113,13 +119,32 @@ class DailyContext(object):
         return 'LUT ON' 
 
     def show_string(self):
-        return self.fields['show'] 
+        show = 'DEVTD'
+        try:
+            show = self.fields['show'] 
+        except KeyError, e:
+            pass
+        return show
 
     def version_string(self):
+        version = '001' 
+        try:
+            version = self.fields['version']
+        except KeyError, e:
+            pass
+        return version
         return self.fields['version']
 
     def sequence_string(self):
-        return self.fields['sequence'] 
+        sequence = 'RD' 
+        try:
+            sequence = self.fields['sequence']
+        except KeyError, e:
+            pass
+        return sequence
+
+    def allocation_string(self):
+        return "".join([self.sequence_string(), self.shot_string()])
 
     def start_string(self):
         return str(self.frame_start)

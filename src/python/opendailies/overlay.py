@@ -44,7 +44,7 @@ def render_with_overlay_command(seq_fmt_str, out_fmt_str, frame, dims, labels, c
     cmd.append( seq_fmt_str%frame)
     context.set_frame('%04d'%frame)
     cmd.append( '-v' )
-    cmd.append( '--autocc' )
+    # cmd.append( '--autocc' )
     cmd.append( '--resize:filter=blackman-harris %dx0 --cut %dx%d'%(
             dims['width'], dims['width'], dims['height']))
 
